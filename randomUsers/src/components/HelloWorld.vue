@@ -1,157 +1,108 @@
 <template>
-  <v-container class="fill-height">
+  <div class="header">
+      <h1>Random User</h1>
+    </div>
+  <v-container class=" fill-width">
     <v-responsive
-      class="align-centerfill-height mx-auto"
-      max-width="900"
+      class="align-center fill-height"
+      max-width="-webkit-fill-available"
     >
-      <v-img
-        class="mb-4"
-        height="150"
-        src="@/assets/logo.png"
-      />
+    
+  <v-card class="pa-2" title="Filtros">
+    <v-row>
+      <v-col cols=6>
+        <v-select
+          :items="items"
+          v-model="selectedGender"
+          density="compact"
+          label="Genero"
+        ></v-select>
+      </v-col>
+      <v-col cols=6>
+        <v-select
+          :items="items"
+          v-model="selectedNat"
+          density="compact"
+          label="Nacionalidad"
+        ></v-select>
+      </v-col>
+      
+      <v-col cols=12>
+        <v-range-slider
+          v-model="rangeSlide"
+          step="1"
+          thumb-label="always"
+          min="18"
+          max="100"
+        ></v-range-slider>
+      </v-col>
+    </v-row>
+  </v-card>
 
-      <div class="text-center">
-        <div class="text-body-2 font-weight-light mb-n1">Welcome to</div>
-
-        <h1 class="text-h2 font-weight-bold">Vuetify</h1>
-      </div>
-
-      <div class="py-4" />
-
-      <v-row>
-        <v-col cols="12">
-          <v-card
-            class="py-4"
-            color="surface-variant"
-            image="https://cdn.vuetifyjs.com/docs/images/one/create/feature.png"
-            prepend-icon="mdi-rocket-launch-outline"
-            rounded="lg"
-            variant="outlined"
-          >
-            <template #image>
-              <v-img position="top right" />
-            </template>
-
-            <template #title>
-              <h2 class="text-h5 font-weight-bold">Get started</h2>
-            </template>
-
-            <template #subtitle>
-              <div class="text-subtitle-1">
-                Change this page by updating <v-kbd>{{ `<HelloWorld />` }}</v-kbd> in <v-kbd>components/HelloWorld.vue</v-kbd>.
-              </div>
-            </template>
-
-            <v-overlay
-              opacity=".12"
-              scrim="primary"
-              contained
-              model-value
-              persistent
-            />
-          </v-card>
-        </v-col>
-
-        <v-col cols="6">
-          <v-card
-            append-icon="mdi-open-in-new"
-            class="py-4"
-            color="surface-variant"
-            href="https://vuetifyjs.com/"
-            prepend-icon="mdi-text-box-outline"
-            rel="noopener noreferrer"
-            rounded="lg"
-            subtitle="Learn about all things Vuetify in our documentation."
-            target="_blank"
-            title="Documentation"
-            variant="text"
-          >
-            <v-overlay
-              opacity=".06"
-              scrim="primary"
-              contained
-              model-value
-              persistent
-            />
-          </v-card>
-        </v-col>
-
-        <v-col cols="6">
-          <v-card
-            append-icon="mdi-open-in-new"
-            class="py-4"
-            color="surface-variant"
-            href="https://vuetifyjs.com/introduction/why-vuetify/#feature-guides"
-            prepend-icon="mdi-star-circle-outline"
-            rel="noopener noreferrer"
-            rounded="lg"
-            subtitle="Explore available framework Features."
-            target="_blank"
-            title="Features"
-            variant="text"
-          >
-            <v-overlay
-              opacity=".06"
-              scrim="primary"
-              contained
-              model-value
-              persistent
-            />
-          </v-card>
-        </v-col>
-
-        <v-col cols="6">
-          <v-card
-            append-icon="mdi-open-in-new"
-            class="py-4"
-            color="surface-variant"
-            href="https://vuetifyjs.com/components/all"
-            prepend-icon="mdi-widgets-outline"
-            rel="noopener noreferrer"
-            rounded="lg"
-            subtitle="Discover components in the API Explorer."
-            target="_blank"
-            title="Components"
-            variant="text"
-          >
-            <v-overlay
-              opacity=".06"
-              scrim="primary"
-              contained
-              model-value
-              persistent
-            />
-          </v-card>
-        </v-col>
-
-        <v-col cols="6">
-          <v-card
-            append-icon="mdi-open-in-new"
-            class="py-4"
-            color="surface-variant"
-            href="https://discord.vuetifyjs.com"
-            prepend-icon="mdi-account-group-outline"
-            rel="noopener noreferrer"
-            rounded="lg"
-            subtitle="Connect with Vuetify developers."
-            target="_blank"
-            title="Community"
-            variant="text"
-          >
-            <v-overlay
-              opacity=".06"
-              scrim="primary"
-              contained
-              model-value
-              persistent
-            />
-          </v-card>
-        </v-col>
-      </v-row>
+  <div>
+    <v-btn @click="getRandom">
+      Fetch Users
+    </v-btn>
+    <v-card v-if="show">
+      <v-table height="300px">
+        <thead>
+          <tr>
+            <th class="text-left">Nombre</th>
+            <th class="text-left">Genero</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="us in fullname" :key="us.name">
+            <td>{{ us.name }}</td>
+            <td>{{ us.gen }}</td>
+          </tr>
+        </tbody>
+      </v-table>
+    </v-card>
+  </div>
     </v-responsive>
   </v-container>
 </template>
 
 <script setup lang="ts">
-  //
+import { getUser } from '@/api/randomUser';
+import { ref } from 'vue';
+interface User {
+  name: string;
+  gen: string;
+}
+const rangeSlide = ref([18, 100]);
+  let items= ['Foo', 'Bar', 'Fizz', 'Buzz'];
+  const selectedGender = ref(null);  
+  const selectedNat=ref(null);
+  const fullname =  ref<User[]>([]);
+const show = ref(false);
+
+// Define the async function
+async function getRandom() {
+  show.value = true;
+  try {
+    const response = await getUser();
+    const users = response.results;
+    fullname.value = users.map((element:any) => {
+      const first = element.name.first;
+      const second = element.name.last;
+      const fn = `${first} ${second}`;
+      const gen = element.gender;
+      return { name: fn, gen: gen };
+    });
+    console.log(users);
+    console.log(fullname.value);
+  } catch (error) {
+    console.error('Error fetching types:', error);
+  }
+}
+
 </script>
+
+<style>
+.header{
+  text-align:center;
+  background-color:#1abc23;
+}
+</style>
