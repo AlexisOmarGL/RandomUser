@@ -175,21 +175,6 @@ async function getRandom(gend: string | null, natio: string | null, edad: number
 function downloadCSV() {
   overlay.value = !overlay.value;
   openModal();
-  let url = 'https://randomuser.me/api/?results=50&format=csv&dl';
-
-  if (selectedNat.value) {
-    url += `&nat=${selectedNat.value}`;
-  }
-  if (selectedGender.value) {
-    url += `&gender=${selectedGender.value}`;
-  }
-
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', 'users.csv');
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
 }
 
 const openModal = () => {

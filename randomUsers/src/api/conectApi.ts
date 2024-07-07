@@ -3,7 +3,7 @@ import type { AxiosInstance } from 'axios';
 
 // Configurar la instancia de Axios
 const apiClient: AxiosInstance = axios.create({
-  baseURL: 'https://randomuser.me/api/?results=50', // URL base de la API
+  baseURL: 'https://randomuser.me/api/', // URL base de la API
   headers: {
     'Content-Type': 'application/json'
   }
